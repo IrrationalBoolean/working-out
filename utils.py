@@ -1,16 +1,21 @@
 import sqlite3
 
-con = sqlite3.connect('pushups.db')
-
 
 def _create_table_pushup(con) -> None:
     """creates table for pushups if table does not exist"""
     cur = con.cursor()
     cur.execute('''
     CREATE TABLE IF NOT EXISTS pushup
-    (id INTEGER PRIMARY KEY, date TEXT, time TEXT, dur REAL, qty INTEGER)
+        ( id INTEGER PRIMARY KEY
+        , date TEXT
+        , time TEXT
+        , dur REAL
+        , qty INTEGER
+        , uid INTEGER
+        , FOREIGN KEY (uid)
+            REFERENCES user (uid)
+        )
     ''')
-    cur.commit()
 
 
 def _create_table_plank(con) -> None:
@@ -18,9 +23,14 @@ def _create_table_plank(con) -> None:
     cur = con.cursor()
     cur.execute('''
     CREATE TABLE IF NOT EXISTS plank
-    (id INTEGER PRIMARY KEY, date TEXT, time TEXT, dur REAL)
+        ( id INTEGER PRIMARY KEY
+        , date TEXT, time TEXT
+        , dur REAL
+        , uid INTEGER
+        , FOREIGN KEY (uid)
+            REFERENCES user (uid)
+        )
     ''')
-    cur.commit()
 
 
 def _create_table_user(con) -> None:
@@ -30,7 +40,6 @@ def _create_table_user(con) -> None:
     CREATE TABLE IF NOT EXISTS user
     (id INTEGER PRIMARY KEY, name TEXT)
     ''')
-    cur.commit()
 
 
 def check_table(con, table: str) -> bool:
@@ -46,10 +55,13 @@ def check_table(con, table: str) -> bool:
 def start_app():
     """creates tables if they don't exist, returns connection to database"""
     con = sqlite3.connect('pushups.db')
-    if not check_table('pushup'):
-        _create_table_pushup(con)
-    if not check_table('plank'):
-        _create_table_plank(con)
-    if not check_table('user'):
+    cur = con.cursor()
+    cur.execute('PRAGMA foreign_keys = ON')
+    con.commit()
+    if not check_table(con, 'user'):
         _create_table_user(con)
+    if not check_table(con, 'pushup'):
+        _create_table_pushup(con)
+    if not check_table(con, 'plank'):
+        _create_table_plank(con)
     return con
