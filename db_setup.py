@@ -1,5 +1,7 @@
 import sqlite3
 
+from db_query import check_table
+
 
 def _create_table_pushup(con) -> None:
     """creates table for pushups if table does not exist"""
@@ -42,19 +44,9 @@ def _create_table_user(con) -> None:
     ''')
 
 
-def check_table(con, table: str) -> bool:
-    """checks if table exists in database, returns boolean"""
-    cur = con.cursor()
-    table_data = cur.execute(f"""SELECT name FROM sqlite_master WHERE type='table' AND name='{table}'""")
-    table_fetch = table_data.fetchall()
-    if table_fetch:
-        return True
-    return False
-
-
 def start_app() -> sqlite3.Connection:
     """creates tables if they don't exist, returns connection to database"""
-    con = sqlite3.connect('pushups.db')
+    con = sqlite3.connect('test.db')
     cur = con.cursor()
     cur.execute('PRAGMA foreign_keys = ON')
     con.commit()
