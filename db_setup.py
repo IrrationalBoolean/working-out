@@ -52,7 +52,7 @@ def check_table(con, table: str) -> bool:
     return False
 
 
-def start_app():
+def start_app() -> sqlite3.Connection:
     """creates tables if they don't exist, returns connection to database"""
     con = sqlite3.connect('pushups.db')
     cur = con.cursor()
