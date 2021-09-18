@@ -1,6 +1,6 @@
 import sqlite3
 
-db_name = 'test.db'
+db_name = 'data.db'
 
 
 def _create_table_pushup(cur) -> None:
@@ -93,7 +93,7 @@ def get_user_by_id(cur, id) -> str:
     """retrieves user name from db with cursor and user id"""
     cur.execute(f'''
     SELECT name FROM user WHERE id = {id} ''')
-    return cur.fetchone()
+    return cur.fetchone()[0]
 
 
 def check_table(cur, table: str) -> bool:
