@@ -1,7 +1,37 @@
-from rich.prompt import Prompt
+from rich.prompt import IntPrompt, Prompt
 
 from db_utils import get_pushup_menu
 from ux import login_menu, main_menu, plank_menu, pushup_menu
+
+
+def planks(user, cur):
+    import time, datetime
+    start = time.time()
+    date = datetime.datetime.now().date()
+    Prompt.ask("Press Enter when done:")
+    cur.execute('''
+            INSERT INTO plank (date, time, dur, uid) 
+            VALUES(?,?,?,?)''', (date, datetime.datetime.now().time().strftime('%H:%M:%S'), time.time()-start, user))
+    cur.execute('''select * from plank''')
+    for row in cur.fetchall():
+        print(row[1:])
+        time.sleep(.31)
+
+    con.commit()
+
+def pushups(user, cur):
+    import time, datetime
+    start = time.time()
+    date = datetime.datetime.now().date()
+    qty = IntPrompt.ask("Enter quantity of pushups: ")
+    cur.execute('''
+            INSERT INTO pushup (date, time, dur, qty, uid) 
+            VALUES(?,?,?,?,?)''', (date, datetime.datetime.now().time().strftime('%H:%M:%S'), time.time()-start, qty, user))
+    cur.execute('''select * from pushup''')
+    for row in cur.fetchall():
+        print(row[1:])
+    con.commit()
+
 
 
 def the_loop(con):
@@ -32,6 +62,8 @@ def the_loop(con):
                     menu = None
                     user = None
                 #todo do pushups
+                if pushup_option == 1:
+                    pushups(user, cur)
                 # some stats
                 elif pushup_option == 2:
                     text = get_pushup_menu(cur, user)
@@ -43,20 +75,22 @@ def the_loop(con):
             # selected planks
             elif menu == 2:
                 # in plank menu
-                pushup_option = plank_menu(cur, user)
-                print(pushup_option)
+                plank_option = plank_menu(cur, user)
+                print(plank_option)
                 # log out
-                if pushup_option == 0:
+                if plank_option == 0:
                     menu = None
                     user = None
-                #todo do plank
+                # do plank
+                if plank_option == 1:
+                    planks(user, cur)
                 #todo some stats
-                elif pushup_option == 2:
+                elif plank_option == 2:
                 #    text = get_pushup_menu(cur, user)
                 #    print(text)
                     Prompt.ask('press enter to continue')
                 # main menu
-                elif pushup_option == 3:
+                elif plank_option == 3:
                     menu = None
 
 if __name__ == "__main__":
