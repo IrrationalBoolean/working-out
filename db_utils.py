@@ -1,5 +1,7 @@
 import sqlite3
 
+db_name = 'test.db'
+
 
 def _create_table_pushup(cur) -> None:
     """creates table for pushups if table does not exist"""
@@ -61,7 +63,6 @@ def get_pushup_menu(cur, user) -> str:
         tp = total_pushups[0]
         text += f"You've recoded {tp[0]} pushups over {tp[1]:.0f} seconds with this program! \n"
 
-
     return text + '\n'
 
 
@@ -70,7 +71,8 @@ def _create_table_plank(cur) -> None:
     cur.execute('''
     CREATE TABLE IF NOT EXISTS plank
         ( id INTEGER PRIMARY KEY
-        , date TEXT, time TEXT
+        , date TEXT
+        , time TEXT
         , dur REAL
         , uid INTEGER
         , FOREIGN KEY (uid)
@@ -86,12 +88,12 @@ def _create_table_user(cur) -> None:
     (id INTEGER PRIMARY KEY, name TEXT)
     ''')
 
+
 def get_user_by_id(cur, id) -> str:
     """retrieves user name from db with cursor and user id"""
     cur.execute(f'''
     SELECT name FROM user WHERE id = {id} ''')
     return cur.fetchone()
-
 
 
 def check_table(cur, table: str) -> bool:
@@ -116,7 +118,7 @@ def select_all(cur, table) -> list:
 
 def start_app() -> sqlite3.Connection:
     """creates tables if they don't exist, returns connection to database"""
-    con = sqlite3.connect('data.db')
+    con = sqlite3.connect(db_name)
     cur = con.cursor()
     cur.execute('PRAGMA foreign_keys = ON')
     con.commit()
