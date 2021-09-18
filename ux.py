@@ -9,19 +9,21 @@ from db_utils import get_user_by_id, select_all, start_app
 
 con = start_app()
 cur = con.cursor()
-
+id_color ='bold'
+choice_color = 'white'
 
 
 def login_menu(cur) -> int:
     """Greets user and returns user id"""
     available_users = select_all(cur, 'user')
     table = Table(title='Available Users')
-    table.add_column(f'{"UID":>9}', justify='right', style='green', no_wrap=True)
-    table.add_column('Name', justify='left', style='blue', no_wrap=True)
+    table.add_column("UID".rjust(9), justify='right', style=id_color, no_wrap=True)
+    table.add_column('Name'.ljust(20), justify='left', style=choice_color, no_wrap=True)
     table.add_row("0", "Register")
     for user in available_users:
         table.add_row(str(user[0]), user[1])
     options = ["0"] + [str(user[0]) for user in available_users]
+
     print(options)
 
     console = Console()
@@ -33,12 +35,14 @@ def login_menu(cur) -> int:
 
 
 def main_menu(cur, user):
-    table = Table(title=f"Let's Exercise")
-    table.add_column(f'{"Choice ID"}', justify='right', style='green', no_wrap=True)
-    table.add_column("Option", justify='left', style='blue', no_wrap=True)
+    user_name = get_user_by_id(cur, user)
+    table = Table(title=f"{user_name}: Let's Exercise")
+    table.add_column("Choice ID", justify='right', style=id_color, no_wrap=True)
+    table.add_column("Option".ljust(20), justify='left', style=choice_color, no_wrap=True)
     table.add_row("0", "Log Out")
     table.add_row("1", "Pushups")
     table.add_row("2", "Plank")
+
     console = Console()
     os.system('clear')
     console.print(table)
@@ -47,9 +51,10 @@ def main_menu(cur, user):
 
 
 def pushup_menu(cur, user):
-    table = Table(title=f"Pushup Time")
-    table.add_column(f'{"Choice ID"}', justify='right', style='green', no_wrap=True)
-    table.add_column("Option", justify='left', style='blue', no_wrap=True)
+    user_name = get_user_by_id(cur, user)
+    table = Table(title=f"{user_name}: Pushup Time")
+    table.add_column("Choice ID", justify='right', style=id_color, no_wrap=True)
+    table.add_column("Option".ljust(20), justify='left', style=choice_color, no_wrap=True)
     table.add_row("0", "Log Out")
     table.add_row("1", "Start Pushups")
     table.add_row("2", "Some Stats")
@@ -62,9 +67,10 @@ def pushup_menu(cur, user):
 
 
 def plank_menu(cur, user):
-    table = Table(title=f"Plank It Out")
-    table.add_column(f'{"Choice ID"}', justify='right', style='green', no_wrap=True)
-    table.add_column("Option", justify='left', style='blue', no_wrap=True)
+    user_name = get_user_by_id(cur, user)
+    table = Table(title=f"{user_name}: Plank It Out")
+    table.add_column("Choice ID", justify='right', style=id_color, no_wrap=True)
+    table.add_column("Option".ljust(20), justify='left', style=choice_color, no_wrap=True)
     table.add_row("0", "Log Out")
     table.add_row("1", "Start Plank")
     table.add_row("2", "Some Stats")
